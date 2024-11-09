@@ -5,6 +5,7 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
+
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -21,46 +22,55 @@ public_users.post("/register", (req,res) => {
             } else {
                 return res.status(404).json({message: "User already exists!"});
             }
-        }  
+        }   
         return res.status(404).json({message: "User password not provided."});
     }
     // Return error if username or password is missing
-    return res.status(404).json({message: "User name not provided."});
+    return res.status(404).json({message: "Use r name not provided."});
 });
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  return res.status(200).send(JSON.stringify(users, null, 4));
+    let promise = new Promise((resolve, reject)=>{resolve(books)});
+    promise.then((success)=> {return res.status(200).json(success)});
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-  const isbn = req.params.isbn;
-  return res.status(200).json(books[isbn]);
+  let promise = new Promise((resolve, reject)=>{
+    const isbn = req.params.isbn
+    resolve(books[isbn])})
+  promise.then((success)=>{return res.status(200).json(success)});
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-    const author = req.params.author;
-    const result = [];
-    for(var key in books)
-    {
-        if(books[key]["author"] == author)
-        result.push(books[key]);
-    }
-    return res.status(200).json(result);
+    let promise = new Promise((resolve, reject) =>{
+        const author = req.params.author;
+        const result = [];
+        for(var key in books)
+        {
+            if(books[key]["author"] == author)
+            result.push(books[key]);
+        }
+        resolve(result);
+    })
+    promise.then((success)=>{return res.status(200).json(success)});
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-    const title = req.params.title;
-    const result = [];
-    for(var key in books)
-    {
-        if(books[key]["title"] == title)
-        result.push(books[key]);
-    }
-    return res.status(200).json(result);
+    let promise = new Promise((resolve, reject) =>{
+        const title = req.params.title;
+        const result = [];
+        for(var key in books)
+        {
+            if(books[key]["title"] == title)
+            result.push(books[key]);
+        }
+        resolve(result);
+    })
+    promise.then((success)=>{return res.status(200).json(success)});
 });
 
 //  Get book review
